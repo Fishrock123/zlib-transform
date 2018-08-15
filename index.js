@@ -170,7 +170,6 @@ class ZlibTransform {
       }
     }
 
-    // this.bytesRead = 0;
     this._handle = new binding.Zlib(mode);
     this._handle.jsref = this; // Used by processCallback() and zlibOnError()
     this._handle.onerror = zlibOnError;
@@ -221,46 +220,6 @@ class ZlibTransform {
   get _closed () {
     !this._handle
   }
-
-  // flush(kind, callback) {
-  //   var ws = {} //this._writableState;
-  //
-  //   if (typeof kind === 'function' || (kind === undefined && !callback)) {
-  //     callback = kind;
-  //     kind = Z_FULL_FLUSH;
-  //   }
-  //
-  //   if (ws.ended) {
-  //     // TODO: Should be this._closed? is this even relevent anymore?
-  //     if (callback)
-  //       // TODO: Is this an error state...?
-  //       process.nextTick(callback);
-  //   } else if (ws.ending) {
-  //     // TODO: Should be this._closed? is this even relevent anymore?
-  //     // if (callback)
-  //       // TODO: 'listen' for this.sink.next(status_type.end)?
-  //       // this.once(status_type.end, callback);
-  //   } else if (ws.needDrain) {
-  //     // TODO: keep this state?
-  //     const alreadyHadFlushScheduled = this._scheduledFlushFlag !== Z_NO_FLUSH;
-  //     this._scheduledFlushFlag = maxFlush(kind, this._scheduledFlushFlag);
-  //
-  //     // If a callback was passed, always register a new `drain` + flush handler,
-  //     // mostly because that’s simpler and flush callbacks piling up is a rare
-  //     // thing anyway.
-  //     if (!alreadyHadFlushScheduled || callback) {
-  //       const drainHandler = () => this.flush(this._scheduledFlushFlag, callback);
-  //       // this.once('drain', drainHandler);
-  //     }
-  //   } else {
-  //     this._flushFlag = kind;
-  //     // this.write(Buffer.alloc(0), '', callback);
-  //     // ^ this called _transform()
-  //     this._transform(Buffer.alloc(0), 'flush', callback);
-  //
-  //     this._scheduledFlushFlag = Z_NO_FLUSH;
-  //   }
-  // }
 
   next (status, error, buffer, bytes) {
     if (error !== null) {
@@ -324,26 +283,9 @@ class ZlibTransform {
                  this._outBuffer, // out
                  this._outOffset, // out_off
                  handle.availOutBefore); // out_len
-
-    // if (this._bytes + bytes > this._buffer.length) {
-    //   const prevBuffer = this._buffer
-    //   const reallocSize = this._buffer.length + this._reallocateSize
-    //   const neededSize = this._bytes + bytes
-    //   this._buffer = new Buffer.allocUnsafe(neededSize > reallocSize ? neededSize + reallocSize : reallocSize)
-    //   prevBuffer.copy(this._buffer, 0, 0, neededSize)
-    // }
-    //
-    // buffer.copy(this._buffer, this._bytes, 0, bytes)
-    // this._bytes += bytes
-    //
-    // if (status === status_type.continue) {
-    //   return this.source.pull(null, buffer)
-    // }
   }
 
   pull (error, buffer) {
-    // if (this._bytes === 0) {
-
     if (this._pullFromHandle) {
       var handle = this._handle;
       if (!handle) {
@@ -366,17 +308,6 @@ class ZlibTransform {
     }
 
     return this.source.pull(error, error ? undefined : buffer || Buffer.alloc(1024 * 16))
-    // }
-
-    // if (this._readPos >= this._bytes) {
-    //   this.sink.next(status_type.end)
-    // }
-
-    // this._buffer.copy(buffer, 0, this._readPos)
-    //
-    // this._readPos += buffer.length
-    //
-    // this.sink.next(status_type.continue, null, buffer, buffer.length)
   }
 }
 
@@ -390,9 +321,9 @@ function zlibOnError(message, errno) {
   const error = new Error(message);
   error.errno = errno;
   error.code = codes[errno];
-  // XXX: propogate the error up
+
+  // Propogate the error up
   self.source.pull(error, null)
-  // self.emit(status_type.error, error);
 }
 
 function _close(engine, callback) {
@@ -429,7 +360,6 @@ function processCallback() {
   var availInAfter = state[1];
 
   var inDelta = (handle.availInBefore - availInAfter);
-  self.bytesRead += inDelta;
 
   var have = handle.availOutBefore - availOutAfter;
   if (have > 0) {
@@ -475,16 +405,3 @@ function processCallback() {
 }
 
 module.exports = ZlibTransform
-
-Object.defineProperties(module.exports, {
-  constants: {
-    configurable: false,
-    enumerable: true,
-    value: constants
-  },
-  codes: {
-    enumerable: true,
-    writable: false,
-    value: Object.freeze(codes)
-  }
-});
