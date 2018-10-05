@@ -4,18 +4,18 @@ A zlib transform for the [BOB](https://github.com/Fishrock123/bob) streaming pro
 
 ## Usage
 
-**Note**: This version currently requires the `--expose-internals` Node.js flag.
+**Note**: This currently requires the `--expose-internals` Node.js flag & Node.js built from `master`.
 
-```
+```js
 const ZlibTransform = require('zlib-transform')
 new ZlibTransform(options, mode)
 ```
 
-Implements a [BOB transform](https://github.com/Fishrock123/bob/blob/master/reference-buffered-transform.js) for using zlib compression / decompression.
+Implements a [BOB transform](https://github.com/Fishrock123/bob/blob/master/reference-buffered-transform.js) for doing zlib compression / decompression.
 
 ### Example
 
-```
+```js
 const zlib = require('zlib')
 const ZlibTransform = require('zlib-transform')
 
