@@ -200,6 +200,7 @@ class ZlibTransform {
     // The streams+ state
     this._ended = false
     this._pullFromHandle = false
+    this._pullSize = opts.hwm || 1024 * 16
   }
 
   bindSource (source) {
@@ -264,7 +265,7 @@ class ZlibTransform {
 
       if (status === status_type.end) return
 
-      if (pullMore) this.source.pull(null, Buffer.alloc(1024 * 16))
+      if (pullMore) this.source.pull(null, Buffer.alloc(this._pullSize))
     }
 
     const chunk = buffer.slice(0, bytes)
@@ -307,7 +308,7 @@ class ZlibTransform {
       return
     }
 
-    return this.source.pull(error, error ? undefined : buffer || Buffer.alloc(1024 * 16))
+    return this.source.pull(error, error ? undefined : buffer || Buffer.alloc(this._pullSize))
   }
 }
 
