@@ -4,11 +4,11 @@
 
 const util = require('util')
 
-const errors = require('internal/errors');
+// const errors = require('internal/errors');
 const Transform = require('_stream_transform');
 const { _extend } = require('util');
 const { isAnyArrayBuffer } = process.binding('util');
-const { isArrayBufferView } = require('internal/util/types');
+// const { isArrayBufferView } = require('internal/util/types');
 const binding = process.binding('zlib');
 const assert = require('assert').ok;
 const {
@@ -78,15 +78,15 @@ class ZlibTransform {
     var dictionary;
 
     if (typeof mode !== 'number')
-      throw new errors.TypeError('ERR_INVALID_ARG_TYPE', 'mode', 'number');
+      throw new /*errors.*/TypeError('ERR_INVALID_ARG_TYPE', 'mode', 'number');
     if (mode < DEFLATE || mode > UNZIP)
-      throw new errors.RangeError('ERR_OUT_OF_RANGE', 'mode');
+      throw new /*errors.*/RangeError('ERR_OUT_OF_RANGE', 'mode');
 
     if (opts) {
       chunkSize = opts.chunkSize;
       if (chunkSize !== undefined && chunkSize === chunkSize) {
         if (chunkSize < Z_MIN_CHUNK || !Number.isFinite(chunkSize))
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE',
                                       'chunkSize',
                                       chunkSize);
       } else {
@@ -96,7 +96,7 @@ class ZlibTransform {
       flush = opts.flush;
       if (flush !== undefined && flush === flush) {
         if (flush < Z_NO_FLUSH || flush > Z_BLOCK || !Number.isFinite(flush))
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE', 'flush', flush);
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE', 'flush', flush);
       } else {
         flush = Z_NO_FLUSH;
       }
@@ -105,7 +105,7 @@ class ZlibTransform {
       if (finishFlush !== undefined && finishFlush === finishFlush) {
         if (finishFlush < Z_NO_FLUSH || finishFlush > Z_BLOCK ||
             !Number.isFinite(finishFlush)) {
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE',
                                       'finishFlush',
                                       finishFlush);
         }
@@ -117,7 +117,7 @@ class ZlibTransform {
       if (windowBits !== undefined && windowBits === windowBits) {
         if (windowBits < Z_MIN_WINDOWBITS || windowBits > Z_MAX_WINDOWBITS ||
             !Number.isFinite(windowBits)) {
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE',
                                       'windowBits',
                                       windowBits);
         }
@@ -129,7 +129,7 @@ class ZlibTransform {
       if (level !== undefined && level === level) {
         if (level < Z_MIN_LEVEL || level > Z_MAX_LEVEL ||
             !Number.isFinite(level)) {
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE',
                                       'level', level);
         }
       } else {
@@ -140,7 +140,7 @@ class ZlibTransform {
       if (memLevel !== undefined && memLevel === memLevel) {
         if (memLevel < Z_MIN_MEMLEVEL || memLevel > Z_MAX_MEMLEVEL ||
             !Number.isFinite(memLevel)) {
-          throw new errors.RangeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/RangeError('ERR_INVALID_OPT_VALUE',
                                       'memLevel', memLevel);
         }
       } else {
@@ -151,7 +151,7 @@ class ZlibTransform {
       if (strategy !== undefined && strategy === strategy) {
         if (strategy < Z_DEFAULT_STRATEGY || strategy > Z_FIXED ||
             !Number.isFinite(strategy)) {
-          throw new errors.TypeError('ERR_INVALID_OPT_VALUE',
+          throw new /*errors.*/TypeError('ERR_INVALID_OPT_VALUE',
                                      'strategy', strategy);
         }
       } else {
@@ -159,15 +159,15 @@ class ZlibTransform {
       }
 
       dictionary = opts.dictionary;
-      if (dictionary !== undefined && !isArrayBufferView(dictionary)) {
-        if (isAnyArrayBuffer(dictionary)) {
-          dictionary = Buffer.from(dictionary);
-        } else {
-          throw new errors.TypeError('ERR_INVALID_OPT_VALUE',
-                                     'dictionary',
-                                     dictionary);
-        }
-      }
+      // if (dictionary !== undefined && !isArrayBufferView(dictionary)) {
+      //   if (isAnyArrayBuffer(dictionary)) {
+      //     dictionary = Buffer.from(dictionary);
+      //   } else {
+      //     throw new errors.TypeError('ERR_INVALID_OPT_VALUE',
+      //                                'dictionary',
+      //                                dictionary);
+      //   }
+      // }
     }
 
     this._handle = new binding.Zlib(mode);
@@ -183,7 +183,7 @@ class ZlibTransform {
                            this._writeState,
                            processCallback,
                            dictionary)) {
-      throw new errors.Error('ERR_ZLIB_INITIALIZATION_FAILED');
+      throw new /*errors.*/Error('ERR_ZLIB_INITIALIZATION_FAILED');
     }
 
     this._outBuffer = Buffer.allocUnsafe(chunkSize);
@@ -253,7 +253,7 @@ class ZlibTransform {
     var handle = this._handle;
     if (!handle) {
       this.close()
-      return this.sink.next(status, new errors.Error('ERR_ZLIB_BINDING_CLOSED'))
+      return this.sink.next(status, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'))
     }
 
     const cb = (error, pullMore) => {
@@ -290,7 +290,7 @@ class ZlibTransform {
       var handle = this._handle;
       if (!handle) {
         this.close()
-        return this.sink.next(status, new errors.Error('ERR_ZLIB_BINDING_CLOSED'))
+        return this.sink.next(status, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'))
       }
 
       return handle.write(handle.flushFlag,
