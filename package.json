@@ -4,7 +4,9 @@
   "description": "A zlib transform for the BOB streaming protocol.",
   "main": "index.js",
   "scripts": {
-    "test": "node --expose-internals ./test/test-basic.js"
+    "test-only": "tap test/*.js -J",
+    "lint": "standard --verbose",
+    "test": "npm run -s lint && npm run -s test-only"
   },
   "repository": {
     "type": "git",
@@ -28,9 +30,11 @@
   },
   "homepage": "https://github.com/Fishrock123/zlib-transform#readme",
   "dependencies": {
-    "bob-status": "0.0.0"
+    "bob-streams": "^0.4.2"
   },
   "devDependencies": {
-    "fs-source": "0.0.2"
+    "fs-source": "0.0.5",
+    "standard": "^14.3.1",
+    "tap": "^14.10.5"
   }
 }

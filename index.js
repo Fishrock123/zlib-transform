@@ -1,3 +1,5 @@
+/* eslint-disable semi, comma-dangle, curly, indent, spaced-comment, no-unused-vars, node/no-deprecated-api, no-self-compare, space-before-function-paren */
+
 'use strict';
 
 // Flags: --expose-internals
@@ -16,7 +18,7 @@ const {
   kMaxLength
 } = require('buffer');
 
-const status_type = require('bob-status')
+const status_type = require('bob-status') // eslint-disable-line camelcase
 
 const constants = process.binding('constants').zlib;
 const {
@@ -219,13 +221,13 @@ class ZlibTransform {
   }
 
   get _closed () {
-    !this._handle
+    return !this._handle
   }
 
   next (status, error, buffer, bytes) {
     if (error !== null) {
       this.close()
-      return this.sink.next(status, error)
+      return this.sink.next(status, error, Buffer.alloc(0), 0)
     }
     if (status === status_type.end) {
       this._ended = true
@@ -254,13 +256,13 @@ class ZlibTransform {
     var handle = this._handle;
     if (!handle) {
       this.close()
-      return this.sink.next(status, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'))
+      return this.sink.next(status, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'), Buffer.alloc(0), 0)
     }
 
     const cb = (error, pullMore) => {
       if (error) {
         this.close()
-        return this.sink.next(status, error)
+        return this.sink.next(status, error, Buffer.alloc(0), 0)
       }
 
       if (status === status_type.end) return
@@ -291,7 +293,7 @@ class ZlibTransform {
       var handle = this._handle;
       if (!handle) {
         this.close()
-        return this.sink.next(status, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'))
+        return this.sink.next(status_type.error, new /*errors.*/Error('ERR_ZLIB_BINDING_CLOSED'), Buffer.alloc(0), 0)
       }
 
       return handle.write(handle.flushFlag,
@@ -308,7 +310,7 @@ class ZlibTransform {
       return
     }
 
-    return this.source.pull(error, error ? undefined : buffer || Buffer.alloc(this._pullSize))
+    return this.source.pull(error, buffer || Buffer.alloc(this._pullSize))
   }
 }
 
@@ -324,7 +326,7 @@ function zlibOnError(message, errno) {
   error.code = codes[errno];
 
   // Propogate the error up
-  self.source.pull(error, null)
+  self.source.pull(error, Buffer.alloc(0))
 }
 
 function _close(engine, callback) {
